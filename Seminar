@@ -1,0 +1,30 @@
+%matplotlib inline
+from IPython.display import set_matplotlib_formats
+#set_matplotlib_formats('pdf', 'svg')
+%config InlineBackend.figure_format = 'retina'
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model, metrics
+from IPython.display import SVG, Image, HTML
+from sklearn import tree
+
+data = pd.read_csv('wifi_localization.txt', sep="\t", header=None)
+data = np.hsplit(data, [0,7]) 
+X = data[1] 
+y = data[2]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, shuffle=True)
+mlogr = linear_model.LogisticRegression()
+mlogr.fit(X_train, y_train)
+m_pred = mlogr.predict(X_test)
+print(y_test)
+print(m_pred)
+print("Accuracy", metrics.accuracy_score(y_test, m_pred))
+
+dt_pruned = tree.DecisionTreeClassifier(max_depth=4)
+dt_pruned.fit(X_train, y_train)
+dt_pred = dt_pruned.predict(X_test)
+print(y_test)
+print(dt_pred)
+print('Accuracy', metrics.accuracy_score(y_test, dt_pred))
